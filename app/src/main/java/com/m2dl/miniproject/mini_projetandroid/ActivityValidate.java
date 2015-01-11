@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class MiniProject extends ActionBarActivity implements LocationListener {
+public class ActivityValidate extends ActionBarActivity implements LocationListener {
     /**
      * Vue texte
      */
@@ -45,16 +45,6 @@ public class MiniProject extends ActionBarActivity implements LocationListener {
      */
     private ImageView view;
 
-    /**
-     * Adresse uri de l'image
-     */
-    private Uri imageUri;
-    /**
-     * Code pour une capture d'image
-     */
-    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
-
-    private Location currentBestLocation = null;
     private LocationManager mLocationManager = null;
 
     private Location currentLocation = null;
@@ -95,11 +85,18 @@ public class MiniProject extends ActionBarActivity implements LocationListener {
         lv.addView(view);
         setContentView(lv);
 
-        // Prise de photo
-        takePhoto(null);
-
         this.saveMetadata();
         this.showMetadata();
+
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                "mailto","biodiversite@gmail.com", null));
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Biodiversité");
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "Photo de la biodiversité");
+        emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(filePath)));
+        startActivity(Intent.createChooser(emailIntent, "Send email..."));
+
+        finish();
+
     }
 
 
@@ -125,62 +122,11 @@ public class MiniProject extends ActionBarActivity implements LocationListener {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * On veut prendre une photo
-     *
-     * @param view
-     */
-    public void takePhoto(View view) {
-        //Création d'un intent
-        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-
-        //Création du fichier image
-        File photo = new File(Environment.getExternalStorageDirectory(), "Pic.jpg");
-        intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                Uri.fromFile(photo));
-        imageUri = Uri.fromFile(photo);
-
-        //On lance l'intent
-        startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-    }
-
-    //On a reçu le résultat d'une activité
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            //Si l'activité était une prise de photo
-            case CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE:
-                if (resultCode == Activity.RESULT_OK) {
-                    Uri selectedImage = imageUri;
-                    getContentResolver().notifyChange(selectedImage, null);
-                    ImageView imageView = view;
-                    ContentResolver cr = getContentResolver();
-                    Bitmap bitmap;
-                    try {
-                        bitmap = android.provider.MediaStore.Images.Media
-                                .getBitmap(cr, selectedImage);
-
-                        imageView.setImageBitmap(bitmap);
-                        //Affichage de l'infobulle
-                        Toast.makeText(this, selectedImage.toString(),
-                                Toast.LENGTH_LONG).show();
-
-                    } catch (Exception e) {
-                        Toast.makeText(this, "Failed to load", Toast.LENGTH_SHORT)
-                                .show();
-                        Log.e("Camera", e.toString());
-                    }
-                }
-        }
-    }
-
-
     public void saveMetadata() {
         ExifInterfaceExtended exif = null;
         try {
             exif = new ExifInterfaceExtended(filePath);
-            exif.setAttribute(ExifInterfaceExtended.TAG_USER_COMMENT, "Informations \n plante : ok");
+//            exif.setAttribute(ExifInterfaceExtended.TAG_USER_COMMENT, "Informations \n plante : ok");
             exif.setAttribute(ExifInterfaceExtended.TAG_MAKE, userName);
             String date = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").format(Calendar.getInstance().getTime());
             exif.setAttribute(ExifInterface.TAG_DATETIME, date);
@@ -235,7 +181,12 @@ public class MiniProject extends ActionBarActivity implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
-        currentLocation = location;
+
+        if(currentLocation == null){
+            currentLocation = location;
+        } else if ( isBetterLocation(location, currentLocation) ) {
+            currentLocation = location;
+        }
         tv.append(currentLocation + "");
 
     }
@@ -263,11 +214,11 @@ public class MiniProject extends ActionBarActivity implements LocationListener {
         Location locationNet = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
         long GPSLocationTime = 0;
+        long NetLocationTime = 0;
+
         if (null != locationGPS) {
             GPSLocationTime = locationGPS.getTime();
         }
-
-        long NetLocationTime = 0;
 
         if (null != locationNet) {
             NetLocationTime = locationNet.getTime();
