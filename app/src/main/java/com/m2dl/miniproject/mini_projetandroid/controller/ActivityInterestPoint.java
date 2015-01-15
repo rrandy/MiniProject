@@ -1,4 +1,4 @@
-package com.m2dl.miniproject.mini_projetandroid;
+package com.m2dl.miniproject.mini_projetandroid.controller;
 
 import android.app.AlertDialog;
 import android.content.ContentResolver;
@@ -15,6 +15,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.m2dl.miniproject.mini_projetandroid.R;
 
 import java.io.File;
 import java.io.IOException;

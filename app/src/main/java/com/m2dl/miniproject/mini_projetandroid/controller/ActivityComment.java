@@ -1,4 +1,4 @@
-package com.m2dl.miniproject.mini_projetandroid;
+package com.m2dl.miniproject.mini_projetandroid.controller;
 
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
@@ -8,6 +8,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.m2dl.miniproject.mini_projetandroid.R;
 
 
 public class ActivityComment extends ActionBarActivity {

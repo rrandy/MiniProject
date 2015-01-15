@@ -1,4 +1,4 @@
-package com.m2dl.miniproject.mini_projetandroid;
+package com.m2dl.miniproject.mini_projetandroid.bussiness;
 
 import android.location.Location;
 import android.media.ExifInterface;
