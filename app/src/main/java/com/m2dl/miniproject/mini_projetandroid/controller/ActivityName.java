@@ -1,9 +1,11 @@
-package com.m2dl.miniproject.mini_projetandroid;
+package com.m2dl.miniproject.mini_projetandroid.controller;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.m2dl.miniproject.mini_projetandroid.R;
 
 
 public class ActivityName extends ActionBarActivity {

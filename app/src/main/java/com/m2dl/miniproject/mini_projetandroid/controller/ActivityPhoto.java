@@ -1,4 +1,4 @@
-package com.m2dl.miniproject.mini_projetandroid;
+package com.m2dl.miniproject.mini_projetandroid.controller;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -14,6 +14,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import com.m2dl.miniproject.mini_projetandroid.R;
 
 import java.io.File;
 

@@ -24,7 +24,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".ActivityValidate"
+            android:name=".controller.ActivityValidate"
             android:label="@string/app_name" >
         </activity>
 
@@ -33,15 +33,15 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".ActivityName"
+            android:name=".controller.ActivityName"
             android:label="@string/title_activity_name" >
         </activity>
         <activity
-            android:name=".ActivityPhoto"
+            android:name=".controller.ActivityPhoto"
             android:label="@string/title_activity_photo" >
         </activity>
         <activity
-            android:name=".ActivityMainMenu"
+            android:name=".controller.ActivityMainMenu"
             android:label="@string/title_activity_main_list_menu" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -50,11 +50,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ActivityComment"
+            android:name=".controller.ActivityComment"
             android:label="@string/title_activity_activity_comment" >
         </activity>
         <activity
-            android:name=".ActivityInterestPoint"
+            android:name=".controller.ActivityInterestPoint"
             android:label="@string/title_activity_activity_interest_point" >
         </activity>
     </application>

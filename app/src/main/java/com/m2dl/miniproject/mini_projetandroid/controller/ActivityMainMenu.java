@@ -1,4 +1,4 @@
-package com.m2dl.miniproject.mini_projetandroid;
+package com.m2dl.miniproject.mini_projetandroid.controller;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,9 +17,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.m2dl.miniproject.mini_projetandroid.bussiness.ExifInterfaceExtended;
+import com.m2dl.miniproject.mini_projetandroid.R;
+
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 
 
 public class ActivityMainMenu extends ActionBarActivity {
