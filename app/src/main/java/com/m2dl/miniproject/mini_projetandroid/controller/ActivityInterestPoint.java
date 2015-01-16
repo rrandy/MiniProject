@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.m2dl.miniproject.mini_projetandroid.R;
+import com.m2dl.miniproject.mini_projetandroid.view.CommentDialog;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +25,7 @@ import java.io.IOException;
 
 public class ActivityInterestPoint extends ActionBarActivity implements View.OnTouchListener {
 
+    private CommentDialog commentDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +64,8 @@ public class ActivityInterestPoint extends ActionBarActivity implements View.OnT
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_comment) {
+            commentDialogbox();
             return true;
         }
 
@@ -101,5 +104,10 @@ public class ActivityInterestPoint extends ActionBarActivity implements View.OnT
 
         }
         return true;
+    }
+
+    private void commentDialogbox(){
+        commentDialog = new CommentDialog(this);
+        commentDialog.show();
     }
 }

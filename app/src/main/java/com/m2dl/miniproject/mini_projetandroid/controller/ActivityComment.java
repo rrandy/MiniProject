@@ -18,7 +18,7 @@ public class ActivityComment extends ActionBarActivity {
 
     private View.OnClickListener myListener = new View.OnClickListener() {
         public void onClick(View arg0) {
-            comment = ((EditText)findViewById(R.id.editText)).getText().toString();
+            comment = ((EditText)findViewById(R.id.comment_editText)).getText().toString();
             Intent returnIntent = new Intent();
             returnIntent.putExtra("comment", comment);
             setResult(RESULT_OK, returnIntent);
@@ -30,9 +30,9 @@ public class ActivityComment extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_activity_comment);
+        setContentView(R.layout.activity_comment);
 
-        Button buttonComment = (Button) findViewById(R.id.button_comment);
+        Button buttonComment = (Button) findViewById(R.id.comment_ok);
         buttonComment.setOnClickListener(myListener);
     }
 

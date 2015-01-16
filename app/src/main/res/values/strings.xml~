@@ -14,10 +14,14 @@
     <string name="validate">Valider et envoyer</string>
     <string name="title_activity_activity_comment">ActivityComment</string>
     <string name="title_activity_activity_interest_point">ActivityInterestPoint</string>
+<<<<<<< HEAD
     <string name="sharedPreferencesFile">com.m2dl.miniproject</string>
+
+=======
     <string name="comment_hint_textfield">Ecrire ici un commentaire</string>
     <string name="comment_validate_button">ok</string>
     <string name="comment_cancel_button">Annuler</string>
     <string name="comment_textview">Ajouter un commentaire sur la photo</string>
     <string name="comment">Commentaire</string>
+>>>>>>> a2f4aefc7eabfffb8bb9dcce68ac9fb16ceb6110
 </resources>

@@ -16,7 +16,11 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+<<<<<<< HEAD
 import com.m2dl.miniproject.mini_projetandroid.business.DataStorage;
+=======
+>>>>>>> a2f4aefc7eabfffb8bb9dcce68ac9fb16ceb6110
 import com.m2dl.miniproject.mini_projetandroid.business.ExifInterfaceExtended;
 import com.m2dl.miniproject.mini_projetandroid.R;
 
