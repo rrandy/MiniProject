@@ -14,5 +14,6 @@
     <string name="validate">Valider et envoyer</string>
     <string name="title_activity_activity_comment">ActivityComment</string>
     <string name="title_activity_activity_interest_point">ActivityInterestPoint</string>
+    <string name="sharedPreferencesFile">com.m2dl.miniproject</string>
 
 </resources>

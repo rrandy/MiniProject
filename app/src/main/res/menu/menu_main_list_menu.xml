@@ -2,6 +2,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.m2dl.miniproject.mini_projetandroid.controller.ActivityMainMenu">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
+    <item android:id="@+id/action_leave" android:title="Quitter"
+        android:orderInCategory="200" app:showAsAction="never" />
+
+    <item android:id="@+id/action_clearSharedPref" android:title="Effacer préférences"
         android:orderInCategory="100" app:showAsAction="never" />
 </menu>

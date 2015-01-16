@@ -17,7 +17,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.m2dl.miniproject.mini_projetandroid.bussiness.ExifInterfaceExtended;
+import com.m2dl.miniproject.mini_projetandroid.business.DataStorage;
+import com.m2dl.miniproject.mini_projetandroid.business.ExifInterfaceExtended;
 import com.m2dl.miniproject.mini_projetandroid.R;
 
 import java.io.IOException;
@@ -26,12 +27,17 @@ import java.io.IOException;
 public class ActivityMainMenu extends ActionBarActivity {
 
     private String filePath = null;
+    private DataStorage storage;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_list_menu);
+
+        // To delete
+        storage = new DataStorage(this, getResources().getString(R.string.sharedPreferencesFile));
+
         filePath = Environment.getExternalStorageDirectory() + "/Pic.jpg";
 
         final ListView listview = (ListView) findViewById(R.id.listView);
@@ -123,9 +129,12 @@ public class ActivityMainMenu extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch(id) {
+            case R.id.action_clearSharedPref :
+                storage.clearPreferences();
+                break;
+            case R.id.action_leave :
+                System.exit(RESULT_OK);
         }
 
         return super.onOptionsItemSelected(item);
@@ -166,7 +175,6 @@ public class ActivityMainMenu extends ActionBarActivity {
 
             return rowView;
         }
-
 
     }
 
