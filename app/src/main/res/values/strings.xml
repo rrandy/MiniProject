@@ -20,4 +20,10 @@
     <string name="comment_cancel_button">Annuler</string>
     <string name="comment_textview">Ajouter un commentaire sur la photo</string>
     <string name="comment">Commentaire</string>
+    <string name="emai_label">Envoyer par mél</string>
+    <string name="email_subject">Biodiversité</string>
+    <string name="email_send_address">kana.songha@gmail.com</string>
+    <string name="email_text">Photo de la biodiversité</string>
+    <string name="email_send_message">Envoyer</string>
+    <string name="email_data_send_filename">datasend.txt</string>
 </resources>

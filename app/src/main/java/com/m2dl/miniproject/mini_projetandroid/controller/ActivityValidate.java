@@ -2,6 +2,7 @@ package com.m2dl.miniproject.mini_projetandroid.controller;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -17,20 +18,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.m2dl.miniproject.mini_projetandroid.business.DataToSend;
 import com.m2dl.miniproject.mini_projetandroid.business.ExifInterfaceExtended;
 import com.m2dl.miniproject.mini_projetandroid.R;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 
 public class ActivityValidate extends ActionBarActivity implements LocationListener {
-    /**
-     * Vue texte
-     */
-    private TextView tv;
     /**
      * Vue image
      */
@@ -39,18 +39,16 @@ public class ActivityValidate extends ActionBarActivity implements LocationListe
     private LocationManager mLocationManager = null;
 
     private Location currentLocation = null;
-    private String userName = null;
     private String filePath = null;
-
+    private DataToSend dataToSend;
+    private String dataSendPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_mini_project);
-
-        userName = "Utilisateur";
         filePath = Environment.getExternalStorageDirectory() + "/Pic.jpg";
-
+        dataToSend = new DataToSend(this);
         // Acquire a reference to the system Location Manager
         mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
@@ -65,26 +63,15 @@ public class ActivityValidate extends ActionBarActivity implements LocationListe
 
         // Layout des vues de l'application
         LinearLayout lv = new LinearLayout(this);
-        tv = new TextView(this);
-        tv.append("Hello, Android, modèle du téléphone : " + Build.MODEL + "\n");
         view = new ImageView(this);
 
-        tv.setMaxWidth(300);
         view.setMaxWidth(300);
 
-        lv.addView(tv);
         lv.addView(view);
         setContentView(lv);
 
-        this.saveMetadata();
-        this.showMetadata();
-
-        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                "mailto","biodiversite@gmail.com", null));
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Biodiversité");
-        emailIntent.putExtra(Intent.EXTRA_TEXT, "Photo de la biodiversité");
-        emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(filePath)));
-        startActivity(Intent.createChooser(emailIntent, "Send email..."));
+        saveMetadata();
+        sendMail();
 
         finish();
 
@@ -114,60 +101,12 @@ public class ActivityValidate extends ActionBarActivity implements LocationListe
     }
 
     public void saveMetadata() {
-        ExifInterfaceExtended exif = null;
-        try {
-            exif = new ExifInterfaceExtended(filePath);
-//            exif.setAttribute(ExifInterfaceExtended.TAG_USER_COMMENT, "Informations \n plante : ok");
-            exif.setAttribute(ExifInterfaceExtended.TAG_MAKE, userName);
-            String date = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").format(Calendar.getInstance().getTime());
-            exif.setAttribute(ExifInterface.TAG_DATETIME, date);
-            exif.setAttribute(ExifInterfaceExtended.TAG_DATETIME_ORIGINAL, date);
-            exif.setAttribute(ExifInterfaceExtended.TAG_DATETIME_DIGITIZED, date);
-            exif.setLocation(this.getCurrentLocation());
-
-            exif.saveAttributes();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public void showMetadata() {
-        ExifInterfaceExtended exif = null;
-        try {
-            exif = new ExifInterfaceExtended(filePath);
-
-            String exifInfos = "Exif information ---\n";
-            exifInfos += getTagString(ExifInterface.TAG_DATETIME, exif);
-            exifInfos += getTagString(ExifInterface.TAG_FLASH, exif);
-            exifInfos += getTagString(ExifInterface.TAG_GPS_LATITUDE, exif);
-            exifInfos += getTagString(ExifInterface.TAG_GPS_LATITUDE_REF, exif);
-            exifInfos += getTagString(ExifInterface.TAG_GPS_LONGITUDE, exif);
-            exifInfos += getTagString(ExifInterface.TAG_GPS_LONGITUDE_REF, exif);
-            exifInfos += getTagString(ExifInterface.TAG_IMAGE_LENGTH, exif);
-            exifInfos += getTagString(ExifInterface.TAG_IMAGE_WIDTH, exif);
-            exifInfos += getTagString(ExifInterface.TAG_MAKE, exif);
-            exifInfos += getTagString(ExifInterface.TAG_MODEL, exif);
-            exifInfos += getTagString(ExifInterface.TAG_ORIENTATION, exif);
-            exifInfos += getTagString(ExifInterface.TAG_WHITE_BALANCE, exif);
-
-            exifInfos += getTagString(ExifInterfaceExtended.TAG_USER_COMMENT, exif);
-            exifInfos += getTagString(ExifInterfaceExtended.TAG_ARTIST, exif);
-            exifInfos += getTagString(ExifInterfaceExtended.TAG_DATETIME_ORIGINAL, exif);
-            exifInfos += getTagString(ExifInterfaceExtended.TAG_DATETIME_DIGITIZED, exif);
-
-            exifInfos += exif.getLocation();
-
-            tv.setText(exifInfos);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private String getTagString(String tag, ExifInterface exif) {
-        return (tag + " : " + exif.getAttribute(tag) + "\n");
+        currentLocation.getLatitude();
+        dataToSend.setLocation(getCurrentLocation());
+        dataToSend.setComment("hello");
+        dataToSend.setInterestPointX(1.0F);
+        dataToSend.setInterestPointY(4.0F);
+        dataSendPath = dataToSend.save();
     }
 
     @Override
@@ -178,8 +117,6 @@ public class ActivityValidate extends ActionBarActivity implements LocationListe
         } else if ( isBetterLocation(location, currentLocation) ) {
             currentLocation = location;
         }
-        tv.append(currentLocation + "");
-
     }
 
     @Override
@@ -287,6 +224,20 @@ public class ActivityValidate extends ActionBarActivity implements LocationListe
         return provider1.equals(provider2);
     }
 
+    private void sendMail(){
+        Resources resources = getResources();
+        Intent emailIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+        emailIntent.setType("image/*");
+        emailIntent.setType("plain/text");
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, resources.getString(R.string.email_subject));
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {resources.getString(R.string.email_send_address)} );
+        emailIntent.putExtra(Intent.EXTRA_TEXT, resources.getString(R.string.email_text));
+        ArrayList<Uri> attachFiles = new ArrayList<Uri>();
+        attachFiles.add(Uri.fromFile(new File(filePath)));
+        attachFiles.add(Uri.fromFile(new File(dataSendPath)));
+        emailIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, attachFiles);
+        startActivity(Intent.createChooser(emailIntent, resources.getString(R.string.email_send_message)));
+    }
 
 //    Le principal scénario d'utilisation est le suivant :
 //    1. Prise d'une photo

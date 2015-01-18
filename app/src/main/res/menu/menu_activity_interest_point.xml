@@ -3,5 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.m2dl.miniproject.mini_projetandroid.controller.ActivityInterestPoint">
     <item android:id="@+id/action_comment" android:title="@string/comment"
-        android:orderInCategory="100" app:showAsAction="never" />
+        android:orderInCategory="1" app:showAsAction="never" />
+    <item android:id="@+id/action_validate" android:title="@string/emai_label"
+        android:orderInCategory="2" app:showAsAction="never" />
 </menu>

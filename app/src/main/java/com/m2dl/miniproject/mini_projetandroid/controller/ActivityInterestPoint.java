@@ -3,6 +3,7 @@ package com.m2dl.miniproject.mini_projetandroid.controller;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -66,6 +67,10 @@ public class ActivityInterestPoint extends ActionBarActivity implements View.OnT
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_comment) {
             commentDialogbox();
+            return true;
+        }else if (id == R.id.action_validate) {
+            Intent intent = new Intent(this, ActivityValidate.class);
+            startActivity(intent);
             return true;
         }
 
