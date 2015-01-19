@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<keys>
+    <element id="plant">Plante
+        <element id="heightSup50"><![CDATA[Hauteur > 50 cm]]>
+            <element id="treeSup50">Arbre
+                <element id="pineTreeSup50">Sapin</element>
+                <element id="oakSup50">Chêne</element>
+            </element>
+            <element id="greenPlantSup50">Plante verte</element>
+        </element>
+        <element id="heightInf50"><![CDATA[Hauteur < 50 cm]]>
+            <element id="flowerInf50">Fleur</element>
+            <element id="greenPlantInf50">Plante verte</element>
+            <element id="bushInf50">Buisson</element>
+        </element>
+    </element>
+    <element id="animal">Animal
+        <element id="invertebrate">Invertébré
+            <element id="insect">Insecte</element>
+            <element id="mollusc">Mollusque</element>
+        </element>
+        <element id="vertebrate">Vertébré
+            <element id="mammal">Mammifère</element>
+            <element id="fish">Poisson</element>
+            <element id="bird">Oiseau</element>
+            <element id="amphibia">Amphibien</element>
+            <element id="reptile">Reptile</element>
+        </element>
+    </element>
+</keys>

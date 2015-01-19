@@ -26,4 +26,6 @@
     <string name="email_text">Photo de la biodiversité</string>
     <string name="email_send_message">Envoyer</string>
     <string name="email_data_send_filename">datasend.txt</string>
+    <string name="title_activity_activity_determining">ActivityDetermining</string>
+
 </resources>

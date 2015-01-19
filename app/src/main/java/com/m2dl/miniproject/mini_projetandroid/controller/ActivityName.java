@@ -60,9 +60,13 @@ public class ActivityName extends ActionBarActivity {
 
     public void saveUsername(View v) {
         EditText usernameTxt = (EditText) findViewById(R.id.editUserName);
-        storage.newSharedPreference("username", usernameTxt.getText().toString());
+        String usernameStr = usernameTxt.getText().toString();
 
-        Intent nextActivity = new Intent(this, ActivityMainMenu.class);
-        startActivity(nextActivity);
+        if (!usernameStr.equals("")) {
+            storage.newSharedPreference("username", usernameStr);
+
+            Intent nextActivity = new Intent(this, ActivityMainMenu.class);
+            startActivity(nextActivity);
+        }
     }
 }

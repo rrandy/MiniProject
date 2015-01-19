@@ -57,6 +57,10 @@
             android:name=".controller.ActivityInterestPoint"
             android:label="@string/title_activity_activity_interest_point" >
         </activity>
+        <activity
+            android:name=".controller.ActivityDetermining"
+            android:label="@string/title_activity_activity_determining" >
+        </activity>
     </application>
 
 </manifest>

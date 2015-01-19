@@ -67,6 +67,8 @@ public class ActivityMainMenu extends ActionBarActivity {
                     Intent intent = new Intent(ActivityMainMenu.this, ActivityInterestPoint.class);
                     startActivityForResult(intent, 1);
                 } else if (getResources().getString(R.string.follow_determination_key).equals(item)) {
+                    Intent intent = new Intent(ActivityMainMenu.this, ActivityDetermining.class);
+                    startActivity(intent);
                 } else if (getResources().getString(R.string.add_comment).equals(item)) {
                     Intent intent = new Intent(ActivityMainMenu.this, ActivityComment.class);
                     startActivityForResult(intent, 1);
