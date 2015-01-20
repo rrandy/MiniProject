@@ -1,8 +1,10 @@
 package com.m2dl.miniproject.mini_projetandroid.controller;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -17,12 +19,16 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.m2dl.miniproject.mini_projetandroid.business.DataToSend;
 import com.m2dl.miniproject.mini_projetandroid.business.ExifInterfaceExtended;
 import com.m2dl.miniproject.mini_projetandroid.R;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
@@ -46,7 +52,7 @@ public class ActivityValidate extends ActionBarActivity implements LocationListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_mini_project);
+        setContentView(R.layout.activity_validate);
         filePath = Environment.getExternalStorageDirectory() + "/Pic.jpg";
         dataToSend = new DataToSend(this);
         // Acquire a reference to the system Location Manager
@@ -61,19 +67,28 @@ public class ActivityValidate extends ActionBarActivity implements LocationListe
 
         currentLocation = this.getLastLocation();
 
-        // Layout des vues de l'application
-        LinearLayout lv = new LinearLayout(this);
-        view = new ImageView(this);
+        ImageView imageView = (ImageView) findViewById(R.id.validateImageView);
 
-        view.setMaxWidth(300);
 
-        lv.addView(view);
-        setContentView(lv);
+        File photo = new File(filePath);
+
+
+        Uri selectedImage = Uri.fromFile(photo);
+        ContentResolver cr = getContentResolver();
+        Bitmap bitmap;
+        try {
+            bitmap = android.provider.MediaStore.Images.Media
+                    .getBitmap(cr, selectedImage);
+            imageView.setImageBitmap(bitmap);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
         saveMetadata();
-        sendMail();
+//        sendMail();
 
-        finish();
+//        finish();
 
     }
 
@@ -107,6 +122,27 @@ public class ActivityValidate extends ActionBarActivity implements LocationListe
         dataToSend.setInterestPointX(1.0F);
         dataToSend.setInterestPointY(4.0F);
         dataSendPath = dataToSend.save();
+
+        TextView textView = (TextView) findViewById(R.id.validateTextView);
+
+        File file = new File(dataSendPath);
+        StringBuilder text = new StringBuilder();
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String line;
+            while ((line = br.readLine()) != null) {
+                text.append(line);
+                text.append('\n');
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        textView.setText(text);
+
+
     }
 
     @Override
