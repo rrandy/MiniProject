@@ -66,24 +66,30 @@ public class ActivityInterestPoint extends ActionBarActivity implements View.OnT
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
 
         storage = new DataStorage(this, getResources().getString(R.string.sharedPreferencesFile));
+
         photoPath = storage.getSharedPreference("photoPath");
-        File photo = new File(photoPath);
+        if (photoPath == null) {
+            Toast.makeText(this.getApplicationContext(), "Aucune photo prise", Toast.LENGTH_LONG).show();
+            finish();
+        } else {
 
-        // Obtenir les dimensions de l'image
-        this.setImageDimensions(photo.getAbsolutePath());
+            File photo = new File(photoPath);
 
-        Uri selectedImage = Uri.fromFile(photo);
-        ContentResolver cr = getContentResolver();
-        Bitmap bitmap;
-        try {
-            bitmap = android.provider.MediaStore.Images.Media
-                    .getBitmap(cr, selectedImage);
-            imageView.setImageBitmap(bitmap);
-        } catch (IOException e) {
-            e.printStackTrace();
+            // Obtenir les dimensions de l'image
+            this.setImageDimensions(photo.getAbsolutePath());
+
+            Uri selectedImage = Uri.fromFile(photo);
+            ContentResolver cr = getContentResolver();
+            Bitmap bitmap;
+            try {
+                bitmap = android.provider.MediaStore.Images.Media
+                        .getBitmap(cr, selectedImage);
+                imageView.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            imageView.setOnTouchListener(this);
         }
-        imageView.setOnTouchListener(this);
-
 
     }
 

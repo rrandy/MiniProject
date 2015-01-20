@@ -55,6 +55,7 @@ public class ActivityPhoto extends ActionBarActivity {
         //Création du fichier image
         File photo = new File(Environment.getExternalStorageDirectory(), "Pic.jpg");
         storage.newSharedPreference("photoPath", photo.getAbsolutePath());
+
         intent.putExtra(MediaStore.EXTRA_OUTPUT,
                 Uri.fromFile(photo));
         imageUri = Uri.fromFile(photo);
