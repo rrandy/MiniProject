@@ -32,7 +32,5 @@ public class DataStorage {
 
     public void clearPreferences() {
         settings.edit().clear().apply();
-        //settings.edit().commit();
-        Toast.makeText(context,settings.toString(), Toast.LENGTH_LONG).show();
     }
 }

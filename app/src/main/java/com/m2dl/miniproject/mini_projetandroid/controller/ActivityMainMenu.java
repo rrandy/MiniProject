@@ -15,7 +15,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.m2dl.miniproject.mini_projetandroid.business.DataStorage;
 import com.m2dl.miniproject.mini_projetandroid.business.ExifInterfaceExtended;
 import com.m2dl.miniproject.mini_projetandroid.R;
@@ -34,7 +33,6 @@ public class ActivityMainMenu extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_list_menu);
 
-        // To delete
         storage = new DataStorage(this, getResources().getString(R.string.sharedPreferencesFile));
 
         filePath = Environment.getExternalStorageDirectory() + "/Pic.jpg";
@@ -58,7 +56,6 @@ public class ActivityMainMenu extends ActionBarActivity {
             public void onItemClick(AdapterView<?> parent, final View view,
                                     int position, long id) {
                 String item = (String) parent.getItemAtPosition(position);
-                Toast.makeText(getApplicationContext(), item + " selected", Toast.LENGTH_LONG).show();
 
                 if (getResources().getString(R.string.take_photo).equals(item)) {
                     Intent intent = new Intent(ActivityMainMenu.this, ActivityPhoto.class);
@@ -133,6 +130,8 @@ public class ActivityMainMenu extends ActionBarActivity {
         switch(id) {
             case R.id.action_clearSharedPref :
                 storage.clearPreferences();
+                Intent nextActivity = new Intent(this, ActivityName.class);
+                startActivity(nextActivity);
                 break;
             case R.id.action_leave :
                 System.exit(RESULT_OK);
