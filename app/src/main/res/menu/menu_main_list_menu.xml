@@ -5,6 +5,6 @@
     <item android:id="@+id/action_leave" android:title="Quitter"
         android:orderInCategory="200" app:showAsAction="never" />
 
-    <item android:id="@+id/action_clearSharedPref" android:title="Effacer préférences"
+    <item android:id="@+id/action_clearSharedPref" android:title="Changer le nom d'utilisateur"
         android:orderInCategory="100" app:showAsAction="never" />
 </menu>

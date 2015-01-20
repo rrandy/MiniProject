@@ -8,10 +8,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
-
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -108,7 +104,7 @@ public class InterestXmlParser {
         return elements.get(elementId);
     }
 
-    public List<String> getElementIDs() {
-        return elementIDs;
+    public List<String> getFirstLevelElements() {
+        return getDescendants(document.getDocumentElement());
     }
 }

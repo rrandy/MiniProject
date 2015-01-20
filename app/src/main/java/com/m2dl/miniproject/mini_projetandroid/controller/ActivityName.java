@@ -1,15 +1,12 @@
 package com.m2dl.miniproject.mini_projetandroid.controller;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.m2dl.miniproject.mini_projetandroid.R;
 import com.m2dl.miniproject.mini_projetandroid.business.DataStorage;
@@ -26,7 +23,6 @@ public class ActivityName extends ActionBarActivity {
 
         storage = new DataStorage(this, getResources().getString(R.string.sharedPreferencesFile));
         username = storage.getSharedPreference("username");
-        Toast.makeText(this, username, Toast.LENGTH_LONG).show();
         if (username != null) {
             Intent nextActivity = new Intent(this, ActivityMainMenu.class);
             startActivity(nextActivity);
