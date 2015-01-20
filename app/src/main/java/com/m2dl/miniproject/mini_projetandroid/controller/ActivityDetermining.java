@@ -1,116 +1,60 @@
 package com.m2dl.miniproject.mini_projetandroid.controller;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
-import android.widget.ExpandableListView;
-import android.widget.Toast;
-
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.TextView;
 import com.m2dl.miniproject.mini_projetandroid.R;
-import com.m2dl.miniproject.mini_projetandroid.util.ExpandableListAdapter;
+import com.m2dl.miniproject.mini_projetandroid.business.DataStorage;
 import com.m2dl.miniproject.mini_projetandroid.util.InterestXmlParser;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-public class ActivityDetermining extends ActionBarActivity {
+public class ActivityDetermining extends ActionBarActivity implements AdapterView.OnItemSelectedListener {
 
-    ExpandableListAdapter listAdapter;
-    ExpandableListView expListView;
-    List<String> listDataHeader;
-    HashMap<String, List<String>> listDataChild;
+    private List<String> elementList;
+    private int selectedElement;
+    private ArrayAdapter<String> adapter;
+    private Spinner elementSpinner;
+    private InterestXmlParser parser;
+    private TextView tvElementSelection;
+    private String parentElements;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_determining);
 
-        expListView = (ExpandableListView) findViewById(R.id.expandableListView);
-        prepareListData();
-        listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
-        expListView.setAdapter(listAdapter);
+        tvElementSelection = (TextView) findViewById(R.id.tvElements);
+        parentElements = "";
 
-        expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v,
-                                        int groupPosition, int childPosition, long id) {
-                /*Toast.makeText(
-                        getApplicationContext(),
-                        listDataHeader.get(groupPosition)
-                                + " : "
-                                + listDataChild.get(
-                                listDataHeader.get(groupPosition)).get(
-                                childPosition), Toast.LENGTH_SHORT)
-                        .show();*/
-
-                CheckBox box = (CheckBox) v.findViewById(R.id.checkBox);
-                if (box.isSelected()) {
-                    box.setSelected(false);
-                    Toast.makeText(getApplicationContext(), "SELECTED", Toast.LENGTH_SHORT).show();
-                }
-                return false;
-            }
-        });
-    }
-
-    private void prepareListData() {
-        listDataHeader = new ArrayList<String>();
-        listDataChild = new HashMap<String, List<String>>();
+        elementSpinner = (Spinner) findViewById(R.id.elementSpinner);
+        elementSpinner.setOnItemSelectedListener(this);
 
         try {
-
             InputStream stream = getApplicationContext().getAssets().open("interestpointstructure.xml");
-            InterestXmlParser parser = new InterestXmlParser(stream);
-            List<String> elementList = parser.getElementIDs();
-            String elementName;
-            for (int i = 0; i < elementList.size(); i++) {
-                elementName = parser.getElementName(elementList.get(i));
-                listDataHeader.add(elementName);
-                listDataChild.put(elementName, parser.getDescendantsForElement(elementName));
+            parser = new InterestXmlParser(stream);
+            elementList = parser.getFirstLevelElements();
+            List<String> elementNames = new ArrayList<>();
+            for (String element : elementList) {
+                elementNames.add(parser.getElementName(element));
             }
+            tvElementSelection.setText(elementNames.get(0));
+            adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.list_item, elementNames);
+            elementSpinner.setAdapter(adapter);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        // Adding child data
-        /*listDataHeader.add("Top 250");
-        listDataHeader.add("Now Showing");
-        listDataHeader.add("Coming Soon..");
-
-        // Adding child data
-        List<String> top250 = new ArrayList<String>();
-        top250.add("The Shawshank Redemption");
-        top250.add("The Godfather");
-        top250.add("The Godfather: Part II");
-        top250.add("Pulp Fiction");
-        top250.add("The Good, the Bad and the Ugly");
-        top250.add("The Dark Knight");
-        top250.add("12 Angry Men");
-
-        List<String> nowShowing = new ArrayList<String>();
-        nowShowing.add("The Conjuring");
-        nowShowing.add("Despicable Me 2");
-        nowShowing.add("Turbo");
-        nowShowing.add("Grown Ups 2");
-        nowShowing.add("Red 2");
-        nowShowing.add("The Wolverine");
-
-        List<String> comingSoon = new ArrayList<String>();
-        comingSoon.add("2 Guns");
-        comingSoon.add("The Smurfs 2");
-        comingSoon.add("The Spectacular Now");
-        comingSoon.add("The Canyons");
-        comingSoon.add("Europa Report");
-
-        listDataChild.put(listDataHeader.get(0), top250); // Header, Child data
-        listDataChild.put(listDataHeader.get(1), nowShowing);
-        listDataChild.put(listDataHeader.get(2), comingSoon);*/
     }
 
 
@@ -134,5 +78,49 @@ public class ActivityDetermining extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void exploreElement(View v) {
+        parentElements = parentElements + parser.getElementName(elementList.get(selectedElement)).trim() + " >> ";
+        List<String> elementDesc = parser.getDescendantsForElement(elementList.get(selectedElement));
+        List<String> elementNames = new ArrayList<>();
+        for (String element : elementDesc) {
+            elementNames.add(parser.getElementName(element));
+        }
+        elementList = elementDesc;
+        adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.list_item, elementNames);
+        elementSpinner.setAdapter(adapter);
+
+        updateElementText();
+    }
+
+    public void saveElement(View v) {
+        DataStorage storage = new DataStorage(this, getResources().getString(R.string.sharedPreferencesFile));
+        storage.newSharedPreference("determiningKey",elementList.get(selectedElement));
+        System.out.println("Selected element : " + elementList.get(selectedElement));
+        Intent nextActivity = new Intent(this, ActivityMainMenu.class);
+        startActivity(nextActivity);
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        selectedElement = position;
+        Button btn = (Button) findViewById(R.id.btnExploreElement);
+        btn.setEnabled(!isLastElementLevel(elementList.get(position)));
+
+        updateElementText();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
+    private boolean isLastElementLevel(String elementSelected) {
+        return parser.getDescendantsForElement(elementSelected).isEmpty();
+    }
+
+    private void updateElementText() {
+        tvElementSelection.setText(parentElements + parser.getElementName(elementList.get(selectedElement)));
     }
 }

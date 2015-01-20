@@ -9,7 +9,9 @@
             <element id="greenPlantSup50">Plante verte</element>
         </element>
         <element id="heightInf50"><![CDATA[Hauteur < 50 cm]]>
-            <element id="flowerInf50">Fleur</element>
+            <element id="flowerInf50">Fleur
+                <element id="flowerTulip">Tulipe</element>
+            </element>
             <element id="greenPlantInf50">Plante verte</element>
             <element id="bushInf50">Buisson</element>
         </element>
