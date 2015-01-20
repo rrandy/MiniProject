@@ -47,6 +47,7 @@ public class ActivityInterestPoint extends ActionBarActivity implements View.OnT
     private float screenPointY;
     private float screenWidthX;
     private float screenHeightY;
+    private String photoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +64,13 @@ public class ActivityInterestPoint extends ActionBarActivity implements View.OnT
 
         setContentView(R.layout.activity_activity_interest_point);
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
-        File photo = new File(Environment.getExternalStorageDirectory(), "Pic.jpg");
+
+        storage = new DataStorage(this, getResources().getString(R.string.sharedPreferencesFile));
+        photoPath = storage.getSharedPreference("photoPath");
+        File photo = new File(photoPath);
+
+        // Obtenir les dimensions de l'image
+        this.setImageDimensions(photo.getAbsolutePath());
 
         Uri selectedImage = Uri.fromFile(photo);
         ContentResolver cr = getContentResolver();
@@ -137,10 +144,8 @@ public class ActivityInterestPoint extends ActionBarActivity implements View.OnT
             screenPointX = event.getX();
             screenPointY = event.getY();
 
-            File photo = new File(Environment.getExternalStorageDirectory(), "Pic.jpg");
 
-            // Obtenir les dimensions de l'image
-            this.setImageDimensions(photo.getAbsolutePath());
+
             // Obtenir les dimensions de l'écran
             this.setScreenDimensions();
             // Calculer le point d'intérêt proportionnellement à l'image
