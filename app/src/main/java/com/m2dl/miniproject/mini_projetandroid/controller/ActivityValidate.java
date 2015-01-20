@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.m2dl.miniproject.mini_projetandroid.business.DataStorage;
 import com.m2dl.miniproject.mini_projetandroid.business.DataToSend;
 import com.m2dl.miniproject.mini_projetandroid.business.ExifInterfaceExtended;
 import com.m2dl.miniproject.mini_projetandroid.R;
@@ -35,7 +36,7 @@ public class ActivityValidate extends ActionBarActivity implements LocationListe
      * Vue image
      */
     private ImageView view;
-
+    private DataStorage storage;
     private LocationManager mLocationManager = null;
 
     private Location currentLocation = null;
@@ -47,7 +48,10 @@ public class ActivityValidate extends ActionBarActivity implements LocationListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_mini_project);
-        filePath = Environment.getExternalStorageDirectory() + "/Pic.jpg";
+        storage = new DataStorage(this, getResources().getString(R.string.sharedPreferencesFile));
+
+        filePath = storage.getSharedPreference("photoPath");
+
         dataToSend = new DataToSend(this);
         // Acquire a reference to the system Location Manager
         mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
