@@ -13,8 +13,8 @@
     <string name="follow_determination_key">Suivre une clé de détermination</string>
     <string name="add_comment">Rajouter un commentaire</string>
     <string name="validate">Valider et envoyer</string>
-    <string name="title_activity_activity_comment">ActivityComment</string>
-    <string name="title_activity_activity_interest_point">ActivityInterestPoint</string>
+    <string name="title_activity_activity_comment">Commentaire</string>
+    <string name="title_activity_activity_interest_point">Point d\'intérêt</string>
 
     <string name="sharedPreferencesFile">com.m2dl.miniproject</string>
     <string name="comment_hint_textfield">Ecrire ici un commentaire</string>
@@ -30,6 +30,6 @@
     <string name="email_send_message">Envoyer</string>
     <string name="email_data_send_filename">datasend.txt</string>
 
-    <string name="title_activity_activity_determining">ActivityDetermining</string>
+    <string name="title_activity_activity_determining">Clé de détermination</string>
 
 </resources>
