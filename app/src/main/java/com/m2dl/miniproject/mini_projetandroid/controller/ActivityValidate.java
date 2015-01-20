@@ -103,9 +103,6 @@ public class ActivityValidate extends ActionBarActivity implements LocationListe
     public void saveMetadata() {
         currentLocation.getLatitude();
         dataToSend.setLocation(getCurrentLocation());
-        dataToSend.setComment("hello");
-        dataToSend.setInterestPointX(1.0F);
-        dataToSend.setInterestPointY(4.0F);
         dataSendPath = dataToSend.save();
     }
 

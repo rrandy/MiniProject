@@ -23,9 +23,10 @@ public class DataToSend {
     private Context context;
 
 
-    private float interestPointX;
-    private float interestPointY;
+    private String interestPointX;
+    private String interestPointY;
     private String comment;
+    private String determiningKey;
     private FileKeyValue fileToSave;
     private Location location;
     private DataStorage dataStorage;
@@ -34,11 +35,17 @@ public class DataToSend {
         this.context = context;
         filepath = Environment.getExternalStorageDirectory() + "/" +
                 context.getResources().getString(R.string.email_data_send_filename);
+
         fileToSave = new FileKeyValue( filepath );
         dataStorage = new DataStorage(context, context.getResources().getString(R.string.sharedPreferencesFile));
+
+        interestPointX = getInterestPointXFromSharePreference();
+        interestPointY = getInterestPointYFromSharePreference();
+        comment = getCommentFromSharePreference();
+        determiningKey = getDeterminingKeyFromSharePreference();
     }
 
-    public DataToSend(Context context, Location location, float interestPointX, float interestPointY, String comment){
+    public DataToSend(Context context, Location location, String interestPointX, String interestPointY, String comment){
         this.interestPointX = interestPointX;
         this.interestPointY = interestPointY;
         this.comment = comment;
@@ -56,13 +63,14 @@ public class DataToSend {
      */
     public String save(){
         try {
-            fileToSave.put("interest_point_x", interestPointX + "");
-            fileToSave.put("interest_point_y", interestPointY + "");
-            fileToSave.put("comment", comment + "");
+            fileToSave.put("interest_point_x", interestPointX );
+            fileToSave.put("interest_point_y", interestPointY );
+            fileToSave.put("comment", comment);
             fileToSave.put("date", getCurrentDate());
             fileToSave.put("username", getUsername());
             fileToSave.put("gps_latitute", location.getLatitude() + "");
             fileToSave.put("gps_longtitute", location.getLongitude() + "");
+            fileToSave.put("determiningKey",determiningKey);
         } catch (IOException e) {
             Log.e("file not found", e.getMessage() );
         }
@@ -80,7 +88,7 @@ public class DataToSend {
     }
 
 
-    public void setInterestPointX(float interestPointX) {
+    public void setInterestPointX(String interestPointX) {
         this.interestPointX = interestPointX;
     }
 
@@ -88,7 +96,7 @@ public class DataToSend {
         this.context = context;
     }
 
-    public void setInterestPointY(float interestPointY) {
+    public void setInterestPointY(String interestPointY) {
         this.interestPointY = interestPointY;
     }
 
@@ -99,4 +107,21 @@ public class DataToSend {
     public void setLocation(Location location) {
         this.location = location;
     }
+
+    public String getCommentFromSharePreference(){
+        return dataStorage.getSharedPreference("comment");
+    }
+
+    public String getInterestPointXFromSharePreference(){
+        return dataStorage.getSharedPreference("interestPointX");
+    }
+
+    public String getInterestPointYFromSharePreference(){
+        return dataStorage.getSharedPreference("interestPointY");
+    }
+
+    public String getDeterminingKeyFromSharePreference(){
+        return  dataStorage.getSharedPreference("determiningKey");
+    }
+
 }

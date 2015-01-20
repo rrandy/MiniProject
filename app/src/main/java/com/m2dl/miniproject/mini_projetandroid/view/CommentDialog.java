@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.m2dl.miniproject.mini_projetandroid.R;
+import com.m2dl.miniproject.mini_projetandroid.business.DataStorage;
 
 /**
  * Created by kana on 15/01/15.
@@ -15,15 +16,17 @@ import com.m2dl.miniproject.mini_projetandroid.R;
 public class CommentDialog extends Dialog implements
         android.view.View.OnClickListener {
 
-    public Activity activity;
-    public Button yes, cancel;
-    public String comment;
+    private Activity activity;
+    private Button yes, cancel;
+    private String comment;
+    private DataStorage sharePreference;
 
     public CommentDialog(Activity activity) {
         super(activity);
 
         comment = "";
         this.activity = activity;
+        sharePreference = new DataStorage(activity, activity.getResources().getString(R.string.sharedPreferencesFile));
     }
 
     @Override
@@ -52,9 +55,10 @@ public class CommentDialog extends Dialog implements
         dismiss();
     }
 
-    private void createComment(){
+    public void createComment(){
         EditText commentEditText = (EditText) findViewById(R.id.comment_editText);
         comment = commentEditText.getText().toString();
+        sharePreference.newSharedPreference("comment",comment);
     }
 
     public String getComment(){
