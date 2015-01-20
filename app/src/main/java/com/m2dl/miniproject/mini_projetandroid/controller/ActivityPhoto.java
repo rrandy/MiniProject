@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.m2dl.miniproject.mini_projetandroid.R;
+import com.m2dl.miniproject.mini_projetandroid.business.DataStorage;
 
 import java.io.File;
 
@@ -30,9 +31,13 @@ public class ActivityPhoto extends ActionBarActivity {
      */
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
 
+    private DataStorage storage;
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        storage = new DataStorage(this, getResources().getString(R.string.sharedPreferencesFile));
 
         // Prise de photo
         takePhoto(null);
@@ -49,6 +54,8 @@ public class ActivityPhoto extends ActionBarActivity {
 
         //Création du fichier image
         File photo = new File(Environment.getExternalStorageDirectory(), "Pic.jpg");
+        storage.newSharedPreference("photoPath", photo.getAbsolutePath());
+
         intent.putExtra(MediaStore.EXTRA_OUTPUT,
                 Uri.fromFile(photo));
         imageUri = Uri.fromFile(photo);
