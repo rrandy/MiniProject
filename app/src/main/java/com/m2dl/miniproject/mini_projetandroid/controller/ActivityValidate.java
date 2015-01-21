@@ -1,8 +1,10 @@
 package com.m2dl.miniproject.mini_projetandroid.controller;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -123,9 +125,30 @@ public class ActivityValidate extends ActionBarActivity implements LocationListe
         currentLocation.getLatitude();
         dataToSend.setLocation(getCurrentLocation());
         dataToSend.setComment("hello");
-        dataToSend.setInterestPointX(1.0F);
-        dataToSend.setInterestPointY(4.0F);
+        dataToSend.setInterestPointX(String.valueOf(1.0F));
+        dataToSend.setInterestPointY(String.valueOf(4.0F));
         dataSendPath = dataToSend.save();
+
+        TextView textView = (TextView) findViewById(R.id.validateTextView);
+
+        File file = new File(dataSendPath);
+        StringBuilder text = new StringBuilder();
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String line;
+            while ((line = br.readLine()) != null) {
+                text.append(line);
+                text.append('\n');
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        textView.setText(text);
+
+
     }
 
     @Override
