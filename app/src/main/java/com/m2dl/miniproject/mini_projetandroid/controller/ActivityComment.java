@@ -1,8 +1,7 @@
 package com.m2dl.miniproject.mini_projetandroid.controller;
 
-import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,14 +10,25 @@ import android.widget.EditText;
 
 import com.m2dl.miniproject.mini_projetandroid.R;
 import com.m2dl.miniproject.mini_projetandroid.business.DataStorage;
-import com.m2dl.miniproject.mini_projetandroid.view.CommentDialog;
 
 
+/**
+ * Activité d'ajout de commentaire
+ */
 public class ActivityComment extends ActionBarActivity {
-
+    /**
+     * Commentaire texte
+     */
     private String comment;
+    /**
+     * Gestion des données de l'application
+     */
     private DataStorage sharePreference;
 
+    /**
+     * Listener d'obtention du commentaire du editText,
+     * et fin d'activité
+     */
     private View.OnClickListener myListener = new View.OnClickListener() {
         public void onClick(View arg0) {
             EditText commentEditText = (EditText) findViewById(R.id.comment_editText);
@@ -32,14 +42,17 @@ public class ActivityComment extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Layout
         setContentView(R.layout.activity_comment);
 
+        // Données de l'application
         sharePreference = new DataStorage(this, getString(R.string.sharedPreferencesFile));
 
+        // Bouton ok d'ajout de commentaire
         Button buttonComment = (Button) findViewById(R.id.comment_ok);
         buttonComment.setOnClickListener(myListener);
 
-        //Deactivate button cancel for activity mode
+        // Désactivation du bouton cancel pour mode activité normale
         Button cancelButton = (Button) findViewById(R.id.comment_cancel);
         cancelButton.setVisibility(View.GONE);
     }

@@ -11,44 +11,80 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+
 import com.m2dl.miniproject.mini_projetandroid.R;
 import com.m2dl.miniproject.mini_projetandroid.business.DataStorage;
 import com.m2dl.miniproject.mini_projetandroid.util.InterestXmlParser;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Activité de suivi d'une clé de détermination
+ * Pour déterminer si ce qui est photographié est une plante, un animal...
+ */
 public class ActivityDetermining extends ActionBarActivity implements AdapterView.OnItemSelectedListener {
 
+    /**
+     * Liste d'éléments
+     */
     private List<String> elementList;
+    /**
+     * Itérateur de l'élément sélectionné
+     */
     private int selectedElement;
+    /**
+     * Adaptateur de valeurs pour le spinner
+     */
     private ArrayAdapter<String> adapter;
+    /**
+     * Spinner pour sélectionner l'élément
+     */
     private Spinner elementSpinner;
+    /**
+     * Parseur de fichier XML
+     */
     private InterestXmlParser parser;
+    /**
+     * TextView de sélection de l'élément
+     */
     private TextView tvElementSelection;
+    /**
+     * Eléments parents
+     */
     private String parentElements;
+    /**
+     * Eléments sélectionnés
+     */
     private List<String> elementSelection;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Layout
         setContentView(R.layout.activity_determining);
 
+        // Texte de la sélection
         tvElementSelection = (TextView) findViewById(R.id.tvElements);
         parentElements = "";
 
+        // Spinner
         elementSpinner = (Spinner) findViewById(R.id.elementSpinner);
         elementSpinner.setOnItemSelectedListener(this);
 
+        // Bouton précédent
         Button btn = (Button) findViewById(R.id.btnPrec);
         btn.setEnabled(false);
 
+        // Elément sélectionné
         elementSelection = new ArrayList<>();
         elementSelection.add("FIRST_NODE");
 
         try {
+            // Lecture du fichier XML
             InputStream stream = getApplicationContext().getAssets().open("interestpointstructure.xml");
             parser = new InterestXmlParser(stream);
             elementList = parser.getFirstLevelElements();
@@ -87,30 +123,43 @@ public class ActivityDetermining extends ActionBarActivity implements AdapterVie
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Explorer un élément, le sélectionner et aller plus loin dans l'arbre
+     *
+     * @param v vue
+     */
     public void exploreElement(View v) {
-        // Add current element to parent elements
+        // Ajout de l'élément courant à la liste des parents
         parentElements = parentElements + parser.getElementName(elementList.get(selectedElement)).trim() + " >> ";
         elementSelection.add(elementList.get(selectedElement));
 
-        // Update spinner and current element lists
+        // Met à jour le spinner et la liste des éléments courants
         List<String> elementDesc = parser.getDescendantsForElement(elementList.get(selectedElement));
         updateSpinner(elementDesc);
 
+        // Bouton précédent, possibilité de revenir en arrière
         Button btn = (Button) findViewById(R.id.btnPrec);
         btn.setEnabled(true);
 
         updateElementText();
     }
 
+    /**
+     * Revenir à l'élément précédent
+     *
+     * @param v vue
+     */
     public void precedentElement(View v) {
-        elementSelection.remove(elementSelection.size()-1);
-        String previousElement = elementSelection.get(elementSelection.size()-1);
-        System.out.println("Prev " + previousElement);
+        // Supprimer l'élément courant
+        elementSelection.remove(elementSelection.size() - 1);
+        String previousElement = elementSelection.get(elementSelection.size() - 1);
+        // Si on revient au début, on ne peut plus revenir en arrière
         if (previousElement.equals("FIRST_NODE")) {
             updateSpinner(parser.getFirstLevelElements());
             Button btn = (Button) findViewById(R.id.btnPrec);
             btn.setEnabled(false);
         } else {
+            // Sinon on met à jour le spinner
             updateSpinner(parser.getDescendantsForElement(previousElement));
         }
         rebuildParentElementString();
@@ -118,12 +167,17 @@ public class ActivityDetermining extends ActionBarActivity implements AdapterVie
         updateElementText();
     }
 
+    /**
+     * Sauvegarder l'élément choisi dans les préférences
+     *
+     * @param v vue
+     */
     public void saveElement(View v) {
+        // On sauve l'élément choisi
         DataStorage storage = new DataStorage(this, getResources().getString(R.string.sharedPreferencesFile));
-        storage.newSharedPreference("determiningKey",elementList.get(selectedElement));
-        System.out.println("Selected element : " + elementList.get(selectedElement));
-        Intent nextActivity = new Intent(this, ActivityMainMenu.class);
-        startActivity(nextActivity);
+        storage.newSharedPreference("determiningKey", elementList.get(selectedElement));
+        // On revient au menu principal
+        finish();
     }
 
     @Override
@@ -140,14 +194,28 @@ public class ActivityDetermining extends ActionBarActivity implements AdapterVie
 
     }
 
+    /**
+     * Retourne si l'élément est au dernier niveau de l'arbre
+     *
+     * @param elementSelected Element à tester
+     * @return
+     */
     private boolean isLastElementLevel(String elementSelected) {
         return parser.getDescendantsForElement(elementSelected).isEmpty();
     }
 
+    /**
+     * Met à jour le texte
+     */
     private void updateElementText() {
         tvElementSelection.setText(parentElements + parser.getElementName(elementList.get(selectedElement)));
     }
 
+    /**
+     * Met à jour le spinner
+     *
+     * @param elementDesc
+     */
     private void updateSpinner(List<String> elementDesc) {
         List<String> elementNames = new ArrayList<>();
         for (String element : elementDesc) {
@@ -158,6 +226,9 @@ public class ActivityDetermining extends ActionBarActivity implements AdapterVie
         elementSpinner.setAdapter(adapter);
     }
 
+    /**
+     * Reconstruit le texte contenant la clé choisie et ses parents
+     */
     private void rebuildParentElementString() {
         parentElements = "";
         for (int i = 1; i < elementSelection.size(); i++) {

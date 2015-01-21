@@ -3,97 +3,133 @@ package com.m2dl.miniproject.mini_projetandroid.business;
 import android.content.Context;
 import android.location.Location;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
 
 import com.m2dl.miniproject.mini_projetandroid.R;
 import com.m2dl.miniproject.mini_projetandroid.util.FileKeyValue;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
+ * Classe de gestion des métadonnées à envoyer
  * Created by kana on 17/01/15.
  */
 public class DataToSend {
-
+    /**
+     * Chemin du fichier des métadonnées
+     */
     private String filepath;
-    private Context context;
-
-
+    /**
+     * Point d'intérêt, coordonée X
+     */
     private String interestPointX;
+    /**
+     * Point d'intérêt, coordonée Y
+     */
     private String interestPointY;
+    /**
+     * Commentaire
+     */
     private String comment;
+    /**
+     * Clé de détermination
+     */
     private String determiningKey;
+    /**
+     * Fichier clé valeur à sauver
+     */
     private FileKeyValue fileToSave;
+    /**
+     * Géolocalisation
+     */
     private Location location;
+    /**
+     * Gestion des données de l'application
+     */
     private DataStorage dataStorage;
 
-    public DataToSend(Context context){
-        this.context = context;
+    /**
+     * Constructeur
+     *
+     * @param context contexte
+     */
+    public DataToSend(Context context) {
+        // Création du fichier de métadonnées
         filepath = Environment.getExternalStorageDirectory() + "/" +
                 context.getResources().getString(R.string.email_data_send_filename);
+        fileToSave = new FileKeyValue(filepath);
 
-        fileToSave = new FileKeyValue( filepath );
+        // Obtention des informations de l'application
         dataStorage = new DataStorage(context, context.getResources().getString(R.string.sharedPreferencesFile));
-
         interestPointX = getInterestPointXFromSharePreference();
         interestPointY = getInterestPointYFromSharePreference();
         comment = getCommentFromSharePreference();
         determiningKey = getDeterminingKeyFromSharePreference();
     }
 
-    public DataToSend(Context context, Location location, String interestPointX, String interestPointY, String comment){
+    /**
+     * Constructeur
+     *
+     * @param context        contexte
+     * @param location       géolocalisation
+     * @param interestPointX point d'intérêt coordonée X
+     * @param interestPointY point d'intérêt coordonée Y
+     * @param comment        commentaire
+     */
+    public DataToSend(Context context, Location location, String interestPointX, String interestPointY, String comment) {
+        // Création du fichier de métadonnées
+        filepath = Environment.getExternalStorageDirectory() + "/" +
+                context.getResources().getString(R.string.email_data_send_filename);
+        fileToSave = new FileKeyValue(filepath);
+
+        // Obtention des informations de l'application
+        dataStorage = new DataStorage(context, context.getResources().getString(R.string.sharedPreferencesFile));
         this.interestPointX = interestPointX;
         this.interestPointY = interestPointY;
         this.comment = comment;
-        filepath = Environment.getExternalStorageDirectory() + "/" +
-                context.getResources().getString(R.string.email_data_send_filename);
-
-        fileToSave = new FileKeyValue( filepath );
         this.location = location;
-        dataStorage = new DataStorage(context, context.getResources().getString(R.string.sharedPreferencesFile));
     }
 
     /**
-     * save file
-     * @return  directory of saved file
+     * Sauvegarde du fichier de métadonnées
+     *
+     * @return Chemin du fichier de métadonnées
      */
-    public String save(){
+    public String save() {
         try {
-            fileToSave.put("interest_point_x", interestPointX );
-            fileToSave.put("interest_point_y", interestPointY );
+            fileToSave.put("interest_point_x", interestPointX);
+            fileToSave.put("interest_point_y", interestPointY);
             fileToSave.put("comment", comment);
             fileToSave.put("date", getCurrentDate());
             fileToSave.put("username", getUsername());
             fileToSave.put("gps_latitute", location.getLatitude() + "");
             fileToSave.put("gps_longtitute", location.getLongitude() + "");
-            fileToSave.put("determiningKey",determiningKey);
+            fileToSave.put("determining_key", determiningKey);
         } catch (IOException e) {
-            Log.e("file not found", e.getMessage() );
+            Log.e("file not found", e.getMessage());
         }
-        return  filepath;
+        return filepath;
     }
 
-    private String getUsername(){
+    private String getUsername() {
         return dataStorage.getSharedPreference("username");
     }
 
-    private String getCurrentDate(){
+    /**
+     * Obtention de la date courante
+     *
+     * @return la date courante
+     */
+    private String getCurrentDate() {
         String currentDate;
         currentDate = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").format(Calendar.getInstance().getTime());
-        return  currentDate;
+        return currentDate;
     }
-
 
     public void setInterestPointX(String interestPointX) {
         this.interestPointX = interestPointX;
-    }
-
-    public void setContext(Context context) {
-        this.context = context;
     }
 
     public void setInterestPointY(String interestPointY) {
@@ -108,20 +144,20 @@ public class DataToSend {
         this.location = location;
     }
 
-    public String getCommentFromSharePreference(){
+    public String getCommentFromSharePreference() {
         return dataStorage.getSharedPreference("comment");
     }
 
-    public String getInterestPointXFromSharePreference(){
+    public String getInterestPointXFromSharePreference() {
         return dataStorage.getSharedPreference("interestPointX");
     }
 
-    public String getInterestPointYFromSharePreference(){
+    public String getInterestPointYFromSharePreference() {
         return dataStorage.getSharedPreference("interestPointY");
     }
 
-    public String getDeterminingKeyFromSharePreference(){
-        return  dataStorage.getSharedPreference("determiningKey");
+    public String getDeterminingKeyFromSharePreference() {
+        return dataStorage.getSharedPreference("determiningKey");
     }
 
 }
