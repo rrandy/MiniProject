@@ -16,6 +16,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,7 +26,6 @@ import android.widget.Toast;
 
 import com.m2dl.miniproject.mini_projetandroid.business.DataStorage;
 import com.m2dl.miniproject.mini_projetandroid.business.DataToSend;
-import com.m2dl.miniproject.mini_projetandroid.business.ExifInterfaceExtended;
 import com.m2dl.miniproject.mini_projetandroid.R;
 
 import java.io.BufferedReader;
@@ -49,6 +51,14 @@ public class ActivityValidate extends ActionBarActivity implements LocationListe
     private String filePath = null;
     private DataToSend dataToSend;
     private String dataSendPath;
+
+
+    private View.OnClickListener myListener = new View.OnClickListener() {
+        public void onClick(View arg0) {
+        sendMail();
+        finish();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,9 +102,10 @@ public class ActivityValidate extends ActionBarActivity implements LocationListe
 
 
         saveMetadata();
-//        sendMail();
 
-//        finish();
+        Button buttonComment = (Button) findViewById(R.id.validateButton);
+        buttonComment.setOnClickListener(myListener);
+
 
     }
 
@@ -124,9 +135,6 @@ public class ActivityValidate extends ActionBarActivity implements LocationListe
     public void saveMetadata() {
         currentLocation.getLatitude();
         dataToSend.setLocation(getCurrentLocation());
-        dataToSend.setComment("hello");
-        dataToSend.setInterestPointX(String.valueOf(1.0F));
-        dataToSend.setInterestPointY(String.valueOf(4.0F));
         dataSendPath = dataToSend.save();
 
         TextView textView = (TextView) findViewById(R.id.validateTextView);
