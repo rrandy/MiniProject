@@ -10,18 +10,20 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.m2dl.miniproject.mini_projetandroid.R;
+import com.m2dl.miniproject.mini_projetandroid.business.DataStorage;
+import com.m2dl.miniproject.mini_projetandroid.view.CommentDialog;
 
 
 public class ActivityComment extends ActionBarActivity {
 
-    private String comment = null;
+    private String comment;
+    private DataStorage sharePreference;
 
     private View.OnClickListener myListener = new View.OnClickListener() {
         public void onClick(View arg0) {
-            comment = ((EditText)findViewById(R.id.comment_editText)).getText().toString();
-            Intent returnIntent = new Intent();
-            returnIntent.putExtra("comment", comment);
-            setResult(RESULT_OK, returnIntent);
+            EditText commentEditText = (EditText) findViewById(R.id.comment_editText);
+            comment = commentEditText.getText().toString();
+            sharePreference.newSharedPreference("comment", comment);
             finish();
         }
     };
@@ -32,8 +34,14 @@ public class ActivityComment extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comment);
 
+        sharePreference = new DataStorage(this, getString(R.string.sharedPreferencesFile));
+
         Button buttonComment = (Button) findViewById(R.id.comment_ok);
         buttonComment.setOnClickListener(myListener);
+
+        //Deactivate button cancel for activity mode
+        Button cancelButton = (Button) findViewById(R.id.comment_cancel);
+        cancelButton.setVisibility(View.GONE);
     }
 
 
