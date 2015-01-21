@@ -28,6 +28,7 @@ public class ActivityDetermining extends ActionBarActivity implements AdapterVie
     private InterestXmlParser parser;
     private TextView tvElementSelection;
     private String parentElements;
+    private List<String> elementSelection;
 
 
     @Override
@@ -40,6 +41,12 @@ public class ActivityDetermining extends ActionBarActivity implements AdapterVie
 
         elementSpinner = (Spinner) findViewById(R.id.elementSpinner);
         elementSpinner.setOnItemSelectedListener(this);
+
+        Button btn = (Button) findViewById(R.id.btnPrec);
+        btn.setEnabled(false);
+
+        elementSelection = new ArrayList<>();
+        elementSelection.add("FIRST_NODE");
 
         try {
             InputStream stream = getApplicationContext().getAssets().open("interestpointstructure.xml");
@@ -81,16 +88,33 @@ public class ActivityDetermining extends ActionBarActivity implements AdapterVie
     }
 
     public void exploreElement(View v) {
+        // Add current element to parent elements
         parentElements = parentElements + parser.getElementName(elementList.get(selectedElement)).trim() + " >> ";
-        List<String> elementDesc = parser.getDescendantsForElement(elementList.get(selectedElement));
-        List<String> elementNames = new ArrayList<>();
-        for (String element : elementDesc) {
-            elementNames.add(parser.getElementName(element));
-        }
-        elementList = elementDesc;
-        adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.list_item, elementNames);
-        elementSpinner.setAdapter(adapter);
+        elementSelection.add(elementList.get(selectedElement));
 
+        // Update spinner and current element lists
+        List<String> elementDesc = parser.getDescendantsForElement(elementList.get(selectedElement));
+        updateSpinner(elementDesc);
+
+        Button btn = (Button) findViewById(R.id.btnPrec);
+        btn.setEnabled(true);
+
+        updateElementText();
+    }
+
+    public void precedentElement(View v) {
+        elementSelection.remove(elementSelection.size()-1);
+        String previousElement = elementSelection.get(elementSelection.size()-1);
+        System.out.println("Prev " + previousElement);
+        if (previousElement.equals("FIRST_NODE")) {
+            updateSpinner(parser.getFirstLevelElements());
+            Button btn = (Button) findViewById(R.id.btnPrec);
+            btn.setEnabled(false);
+        } else {
+            updateSpinner(parser.getDescendantsForElement(previousElement));
+        }
+        rebuildParentElementString();
+        selectedElement = 0;
         updateElementText();
     }
 
@@ -122,5 +146,22 @@ public class ActivityDetermining extends ActionBarActivity implements AdapterVie
 
     private void updateElementText() {
         tvElementSelection.setText(parentElements + parser.getElementName(elementList.get(selectedElement)));
+    }
+
+    private void updateSpinner(List<String> elementDesc) {
+        List<String> elementNames = new ArrayList<>();
+        for (String element : elementDesc) {
+            elementNames.add(parser.getElementName(element));
+        }
+        elementList = elementDesc;
+        adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.list_item, elementNames);
+        elementSpinner.setAdapter(adapter);
+    }
+
+    private void rebuildParentElementString() {
+        parentElements = "";
+        for (int i = 1; i < elementSelection.size(); i++) {
+            parentElements += parser.getElementName(elementSelection.get(i)).trim() + " >> ";
+        }
     }
 }

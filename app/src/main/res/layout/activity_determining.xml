@@ -30,7 +30,7 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="76dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_below="@+id/elementSpinner"
@@ -39,12 +39,9 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Valider"
-                android:id="@+id/btnValidElem"
-                android:layout_below="@+id/elementSpinner"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:onClick="saveElement"/>
+                android:text="Précédent"
+                android:id="@+id/btnPrec"
+                android:onClick="precedentElement"/>
 
             <Button
                 android:layout_width="wrap_content"
@@ -55,7 +52,19 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:onClick="exploreElement"/>
+
         </LinearLayout>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Valider"
+            android:id="@+id/btnValidElem"
+            android:layout_below="@+id/elementSpinner"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:onClick="saveElement"/>
+
     </LinearLayout>
 
 </RelativeLayout>
