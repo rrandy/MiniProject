@@ -8,87 +8,104 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.ExifInterface;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Environment;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.m2dl.miniproject.mini_projetandroid.R;
 import com.m2dl.miniproject.mini_projetandroid.business.DataStorage;
 import com.m2dl.miniproject.mini_projetandroid.business.DataToSend;
-import com.m2dl.miniproject.mini_projetandroid.R;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.URI;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 
+/**
+ * Activité de validation et d'envoi de l'image et des métadonnées
+ */
 public class ActivityValidate extends ActionBarActivity implements LocationListener {
     /**
-     * Vue image
+     * Gestion des données de l'application
      */
-    private ImageView view;
     private DataStorage storage;
+    /**
+     * Gestion de la géolocalisation
+     */
     private LocationManager mLocationManager = null;
 
+    /**
+     * Position actuelle
+     */
     private Location currentLocation = null;
+    /**
+     * Chemin de la photo
+     */
     private String filePath = null;
+    /**
+     * Gestion de l'envoi des métadonnées
+     */
     private DataToSend dataToSend;
+    /**
+     * Chemin du fichier des métadonnées
+     */
     private String dataSendPath;
+    /**
+     * Constante correspondant à deux minutes
+     */
+    private static final int TWO_MINUTES = 1000 * 60 * 2;
 
-
+    /**
+     * Listener d'envoi final de la photo et des métadonnées
+     */
     private View.OnClickListener myListener = new View.OnClickListener() {
         public void onClick(View arg0) {
-        sendMail();
-        finish();
+            sendMail();
+            finish();
         }
     };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Layout
         setContentView(R.layout.activity_validate);
-        filePath = Environment.getExternalStorageDirectory() + "/Pic.jpg";
-//        setContentView(R.layout.activity_mini_project);
+        // Gestion des données
         storage = new DataStorage(this, getResources().getString(R.string.sharedPreferencesFile));
-
+        // Chemin de la photo
         filePath = storage.getSharedPreference("photoPath");
-
+        // Gestion des métadonnées à envoyer
         dataToSend = new DataToSend(this);
-        // Acquire a reference to the system Location Manager
+
+        // Obtient une référence au Location Manager du système
         mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
-        // Register the listeners with the Location Manager to receive location updates
+        // Enregistre les listeners avec le Location Manager pour recevoir les mises à jour
+        // de géolocalisation
+        // Géolocalisation du réseau
         if (mLocationManager.getAllProviders().contains(LocationManager.NETWORK_PROVIDER))
             mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-
+        // Géolocalisation GPS
         if (mLocationManager.getAllProviders().contains(LocationManager.GPS_PROVIDER))
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 
         currentLocation = this.getLastLocation();
 
+        // ImageView de la photo
         ImageView imageView = (ImageView) findViewById(R.id.validateImageView);
-
-
+        // Fichier photo
         File photo = new File(filePath);
 
-
+        // Mettre la photo dans l'imageView
         Uri selectedImage = Uri.fromFile(photo);
         ContentResolver cr = getContentResolver();
         Bitmap bitmap;
@@ -100,13 +117,12 @@ public class ActivityValidate extends ActionBarActivity implements LocationListe
             e.printStackTrace();
         }
 
-
+        // Sauver toutes les métadonnées
         saveMetadata();
 
+        // Bouton de validation
         Button buttonComment = (Button) findViewById(R.id.validateButton);
         buttonComment.setOnClickListener(myListener);
-
-
     }
 
 
@@ -132,14 +148,19 @@ public class ActivityValidate extends ActionBarActivity implements LocationListe
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Sauvegarde des métadonnées, création et affichage du fichier créé dans le textView
+     * pour validation
+     */
     public void saveMetadata() {
+        // Obtention des données, sauvegarde et création du fichier métadonnées
         currentLocation.getLatitude();
         dataToSend.setLocation(getCurrentLocation());
         dataSendPath = dataToSend.save();
-
-        TextView textView = (TextView) findViewById(R.id.validateTextView);
-
         File file = new File(dataSendPath);
+
+        // Affichage du fichier dans le textView pour validation
+        TextView textView = (TextView) findViewById(R.id.validateTextView);
         StringBuilder text = new StringBuilder();
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
@@ -153,20 +174,24 @@ public class ActivityValidate extends ActionBarActivity implements LocationListe
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         textView.setText(text);
-
-
     }
 
+    /**
+     * A chaque changement de localisation
+     *
+     * @param location localisation
+     */
     @Override
     public void onLocationChanged(Location location) {
-
-        if(currentLocation == null){
+        // S'il n'y a pas de localisation précédente, on prend celle-ci
+        if (currentLocation == null) {
             currentLocation = location;
-        } else if ( isBetterLocation(location, currentLocation) ) {
-            currentLocation = location;
-        }
+        } else
+            // Sinon on prend la nouvelle
+            if (isBetterLocation(location, currentLocation)) {
+                currentLocation = location;
+            }
     }
 
     @Override
@@ -185,7 +210,8 @@ public class ActivityValidate extends ActionBarActivity implements LocationListe
     }
 
     /**
-     * @return the last know best location
+     * Obtention de la dernière géolocalisation connue
+     * @return la dernière géolocalisation connue
      */
     private Location getLastLocation() {
         Location locationGPS = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -209,51 +235,52 @@ public class ActivityValidate extends ActionBarActivity implements LocationListe
         }
     }
 
+    /**
+     * Retourne la géolocalisation courante
+     *
+     * @return La géolocalisation courante
+     */
     public Location getCurrentLocation() {
         return currentLocation;
     }
 
-
-    private static final int TWO_MINUTES = 1000 * 60 * 2;
-
     /**
-     * Determines whether one Location reading is better than the current Location fix
+     * Détermine si une géolocalisation est meilleure que la géolocalisation actuelle
      *
-     * @param location            The new Location that you want to evaluate
-     * @param currentBestLocation The current Location fix, to which you want to compare the new one
+     * @param location            La nouvelle géolocalisation à évaluer
+     * @param currentBestLocation La géolocalisation actuelle
      */
     protected boolean isBetterLocation(Location location, Location currentBestLocation) {
         if (currentBestLocation == null) {
-            // A new location is always better than no location
             return true;
         }
 
-        // Check whether the new location fix is newer or older
+        // Vérifie si la nouvelle géolocalisation est plus ou moins récente
         long timeDelta = location.getTime() - currentBestLocation.getTime();
         boolean isSignificantlyNewer = timeDelta > TWO_MINUTES;
         boolean isSignificantlyOlder = timeDelta < -TWO_MINUTES;
         boolean isNewer = timeDelta > 0;
 
-        // If it's been more than two minutes since the current location, use the new location
-        // because the user has likely moved
+        // Si la nouvelle géolocalisation est récente de plus de deux minutes de différence,
+        // on la choisit car l'utilisateur a bougé
         if (isSignificantlyNewer) {
             return true;
-            // If the new location is more than two minutes older, it must be worse
+            // Sinon, si elle est ancienne, on ne la prend choisit pas
         } else if (isSignificantlyOlder) {
             return false;
         }
 
-        // Check whether the new location fix is more or less accurate
+        // Vérifie si la nouvelle géolocalisation est plus ou moins précise
         int accuracyDelta = (int) (location.getAccuracy() - currentBestLocation.getAccuracy());
         boolean isLessAccurate = accuracyDelta > 0;
         boolean isMoreAccurate = accuracyDelta < 0;
         boolean isSignificantlyLessAccurate = accuracyDelta > 200;
 
-        // Check if the old and new location are from the same provider
+        // Vérifie si les géolocalisations sont du même provider
         boolean isFromSameProvider = isSameProvider(location.getProvider(),
                 currentBestLocation.getProvider());
 
-        // Determine location quality using a combination of timeliness and accuracy
+        // Détermine la qualité de la géolocalisation par rapport au temps et à la précision
         if (isMoreAccurate) {
             return true;
         } else if (isNewer && !isLessAccurate) {
@@ -265,7 +292,7 @@ public class ActivityValidate extends ActionBarActivity implements LocationListe
     }
 
     /**
-     * Checks whether two providers are the same
+     * Vérifie si deux providers sont les mêmes
      */
     private boolean isSameProvider(String provider1, String provider2) {
         if (provider1 == null) {
@@ -274,30 +301,25 @@ public class ActivityValidate extends ActionBarActivity implements LocationListe
         return provider1.equals(provider2);
     }
 
-    private void sendMail(){
+    /**
+     * Envoi de mail avec en pièce jointe la photo et le fichier de métadonnées
+     */
+    private void sendMail() {
         Resources resources = getResources();
         Intent emailIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+        // Informations supplémentaires du mail
         emailIntent.setType("image/*");
         emailIntent.setType("plain/text");
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, resources.getString(R.string.email_subject));
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {resources.getString(R.string.email_send_address)} );
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{resources.getString(R.string.email_send_address)});
         emailIntent.putExtra(Intent.EXTRA_TEXT, resources.getString(R.string.email_text));
+        // Fichiers joints
         ArrayList<Uri> attachFiles = new ArrayList<Uri>();
         attachFiles.add(Uri.fromFile(new File(filePath)));
         attachFiles.add(Uri.fromFile(new File(dataSendPath)));
         emailIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, attachFiles);
+        // Démarrage de l'intent mail
         startActivity(Intent.createChooser(emailIntent, resources.getString(R.string.email_send_message)));
     }
-
-//    Le principal scénario d'utilisation est le suivant :
-//    1. Prise d'une photo
-//    ◦ En interne la photo est géolocalisée, datée et associée au pseudo de l'utilisateur
-//    2. Possibilité de rajouter un point d’intérêt sur la photo
-//    ◦ Permet de cibler ou de délimiter une plante ou un animal
-//    3. Possibilité de suivre une clé de détermination (voir plus bas)
-//    4. Possibilité de rajouter un commentaire
-//    5. Validation
-//    ◦ En interne on envoie alors l'image et les méta-données à un serveur
-
 
 }

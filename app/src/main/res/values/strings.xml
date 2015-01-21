@@ -31,5 +31,7 @@
     <string name="email_data_send_filename">datasend.txt</string>
 
     <string name="title_activity_activity_determining">Clé de détermination</string>
+    <string name="preferencePhotoPath">photoPath</string>
+    <string name="preferenceUsername">username</string>
 
 </resources>

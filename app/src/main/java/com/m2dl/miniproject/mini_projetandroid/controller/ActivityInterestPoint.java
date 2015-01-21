@@ -6,73 +6,105 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Point;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Environment;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.m2dl.miniproject.mini_projetandroid.R;
 import com.m2dl.miniproject.mini_projetandroid.business.DataStorage;
-import com.m2dl.miniproject.mini_projetandroid.business.DataToSend;
 import com.m2dl.miniproject.mini_projetandroid.view.CommentDialog;
 
 import java.io.File;
 import java.io.IOException;
 
-
+/**
+ * Activité de point d'intérêt
+ * Possibilité de rajouter un point d’intérêt sur la photo
+ * Permet de cibler ou de délimiter une plante ou un animal
+ */
 public class ActivityInterestPoint extends ActionBarActivity implements View.OnTouchListener {
 
+    /**
+     * Popup pour ajouter un commentaire
+     */
     private CommentDialog commentDialog;
-
+    /**
+     * Gestion des données dans l'application
+     */
     private DataStorage storage;
-
+    /**
+     * Point d'intérêt sur l'image, coordonnée X
+     */
     private float imagePointX;
+    /**
+     * Point d'intérêt sur l'image, coordonnée Y
+     */
     private float imagePointY;
+    /**
+     * Dimension de l'image, largeur
+     */
     private float imageWidthX;
+    /**
+     * Dimension de l'image, hauteur
+     */
     private float imageHeightY;
-
+    /**
+     * Point d'intérêt sur l'image, coordonnée X
+     */
     private float screenPointX;
+    /**
+     * Point d'intérêt sur l'image, coordonnée Y
+     */
     private float screenPointY;
+    /**
+     * Dimension de l'écran, largeur
+     */
     private float screenWidthX;
+    /**
+     * Dimension de l'écran, hauteur
+     */
     private float screenHeightY;
+    /**
+     * Chemin de la photo
+     */
     private String photoPath;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        storage = new DataStorage(this, getResources().getString(R.string.sharedPreferencesFile));
-
         // Mettre ces options avant la création de l'instance pour ne pas provoquer d'erreurs
-
         // Suppression de la barre de notification
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         super.onCreate(savedInstanceState);
-
+        // Suppression de l'ActionBar
         getSupportActionBar().hide();
 
         setContentView(R.layout.activity_activity_interest_point);
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
 
-        storage = new DataStorage(this, getResources().getString(R.string.sharedPreferencesFile));
+        // Données de l'application
+        storage = new DataStorage(this, getResources().getString(R.string
+                .sharedPreferencesFile));
 
-        photoPath = storage.getSharedPreference("photoPath");
+        // Chemin de la photo
+        photoPath = storage.getSharedPreference(getString(R.string.preferencePhotoPath));
+
         if (photoPath == null) {
-            Toast.makeText(this.getApplicationContext(), "Aucune photo prise", Toast.LENGTH_LONG).show();
+            Toast.makeText(this.getApplicationContext(),
+                    "Aucune photo prise", Toast.LENGTH_LONG).show();
             finish();
-        } else {
 
+        } else {
             File photo = new File(photoPath);
 
             // Obtenir les dimensions de l'image
@@ -82,6 +114,7 @@ public class ActivityInterestPoint extends ActionBarActivity implements View.OnT
             ContentResolver cr = getContentResolver();
             Bitmap bitmap;
             try {
+                // Afficher l'image sur l'imageView
                 bitmap = android.provider.MediaStore.Images.Media
                         .getBitmap(cr, selectedImage);
                 imageView.setImageBitmap(bitmap);
@@ -97,9 +130,11 @@ public class ActivityInterestPoint extends ActionBarActivity implements View.OnT
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_activity_interest_point, menu);
+        getMenuInflater().inflate(R.menu.menu_activity_interest_point,
+                menu);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -121,6 +156,10 @@ public class ActivityInterestPoint extends ActionBarActivity implements View.OnT
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Définir les dimensions de l'image
+     * @param imagePath chemin de l'image
+     */
     public void setImageDimensions(String imagePath) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -130,16 +169,24 @@ public class ActivityInterestPoint extends ActionBarActivity implements View.OnT
         imageHeightY = options.outHeight;
     }
 
+    /**
+     * Définir les dimensions de l'écran
+     */
     public void setScreenDimensions() {
-        DisplayMetrics metrics = getApplicationContext().getResources().getDisplayMetrics();
+        DisplayMetrics metrics = getApplicationContext().getResources()
+                .getDisplayMetrics();
         screenWidthX = metrics.widthPixels;
         screenHeightY = metrics.heightPixels;
     }
 
+    /**
+     * Calculer le point d'intérêt proportionnellement à l'image et l'écran
+     */
     public void setImagePoint() {
         imagePointX = (screenPointX * imageWidthX) / screenWidthX;
         imagePointY = (screenPointY * imageHeightY) / screenHeightY;
     }
+
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
@@ -150,20 +197,24 @@ public class ActivityInterestPoint extends ActionBarActivity implements View.OnT
             screenPointX = event.getX();
             screenPointY = event.getY();
 
-
-
             // Obtenir les dimensions de l'écran
             this.setScreenDimensions();
             // Calculer le point d'intérêt proportionnellement à l'image
             this.setImagePoint();
 
-            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            // Comportement de la Popup de validation du point d'intérêt
+            DialogInterface.OnClickListener dialogClickListener = new DialogInterface
+                    .OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     switch (which) {
                         case DialogInterface.BUTTON_POSITIVE:
-                            storage.newSharedPreference("interestPointX", String.valueOf(imagePointX));
-                            storage.newSharedPreference("interestPointY", String.valueOf(imagePointY));
+                            storage.newSharedPreference(
+                                    "interestPointX", String.valueOf(
+                                            imagePointX));
+                            storage.newSharedPreference(
+                                    "interestPointY", String.valueOf(
+                                            imagePointY));
                             finish();
                             break;
 
@@ -173,10 +224,12 @@ public class ActivityInterestPoint extends ActionBarActivity implements View.OnT
                 }
             };
 
+            // Création de la Popup de validation du point d'intérêt
             AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
             builder
-                    .setMessage("Voulez-vous sélectionner ce point d'intérêt ?"
-                                    + "\n" + "(" + imagePointX + ";" + imagePointY + ")")
+                    .setMessage(
+                            "Voulez-vous sélectionner ce point d'intérêt ?" +
+                                    "\n" + "(" + imagePointX + ";" + imagePointY + ")")
                     .setPositiveButton("Oui", dialogClickListener)
                     .setNegativeButton("Non", dialogClickListener)
                     .show();
@@ -184,6 +237,9 @@ public class ActivityInterestPoint extends ActionBarActivity implements View.OnT
         return true;
     }
 
+    /**
+     * Popup d'ajout de commentaire
+     */
     private void commentDialogbox() {
         commentDialog = new CommentDialog(this);
         commentDialog.show();

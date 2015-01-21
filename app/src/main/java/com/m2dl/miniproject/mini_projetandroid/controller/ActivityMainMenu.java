@@ -2,9 +2,8 @@ package com.m2dl.miniproject.mini_projetandroid.controller;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Environment;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,29 +14,32 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.m2dl.miniproject.mini_projetandroid.business.DataStorage;
+
 import com.m2dl.miniproject.mini_projetandroid.R;
+import com.m2dl.miniproject.mini_projetandroid.business.DataStorage;
 
-import java.io.IOException;
 
-
+/**
+ * Activité du menu principal
+ * Choix des différentes fonctionnalités de l'application
+ */
 public class ActivityMainMenu extends ActionBarActivity {
 
-    private String filePath = null;
+    /**
+     * Gestion des données dans l'application
+     */
     private DataStorage storage;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Layout
         setContentView(R.layout.activity_main_list_menu);
-
+        // Gestion des données
         storage = new DataStorage(this, getResources().getString(R.string.sharedPreferencesFile));
-
-        filePath = Environment.getExternalStorageDirectory() + "/Pic.jpg";
-
+        // Vue du menu
         final ListView listview = (ListView) findViewById(R.id.listView);
-
+        // Eléments titres du menu
         String[] values = new String[]{
                 getResources().getString(R.string.take_photo),
                 getResources().getString(R.string.add_interest_point),
@@ -46,16 +48,18 @@ public class ActivityMainMenu extends ActionBarActivity {
                 getResources().getString(R.string.validate),
 
         };
+        // Layouts spécifiques pour chaque élément
         MyArrayAdapter adapter = new MyArrayAdapter(this, values);
         listview.setAdapter(adapter);
 
+        // Gestion des clics sur chaque élément
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, final View view,
                                     int position, long id) {
                 String item = (String) parent.getItemAtPosition(position);
-
+                // Lancement des activités correspondantes aux éléments
                 if (getResources().getString(R.string.take_photo).equals(item)) {
                     Intent intent = new Intent(ActivityMainMenu.this, ActivityPhoto.class);
                     startActivity(intent);
@@ -72,11 +76,9 @@ public class ActivityMainMenu extends ActionBarActivity {
                     Intent intent = new Intent(ActivityMainMenu.this, ActivityValidate.class);
                     startActivity(intent);
                 }
-
             }
         });
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -92,19 +94,22 @@ public class ActivityMainMenu extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        switch(id) {
-            case R.id.action_clearSharedPref :
+        switch (id) {
+            case R.id.action_clearSharedPref:
                 storage.clearPreferences();
                 Intent nextActivity = new Intent(this, ActivityName.class);
                 startActivity(nextActivity);
                 break;
-            case R.id.action_leave :
+            case R.id.action_leave:
                 System.exit(RESULT_OK);
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Adapteur spécifique pour chaque élément du menu
+     */
     public class MyArrayAdapter extends ArrayAdapter<String> {
         private final Context context;
         private final String[] values;

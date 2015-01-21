@@ -12,21 +12,34 @@ import com.m2dl.miniproject.mini_projetandroid.R;
 import com.m2dl.miniproject.mini_projetandroid.business.DataStorage;
 
 
+/**
+ * Activité nom
+ * Permet à l'utilisateur de renseigner son nom
+ */
 public class ActivityName extends ActionBarActivity {
 
+    /**
+     * Gestion des données de l'application
+     */
     private DataStorage storage;
+    /**
+     * Nom de l'utilisateur
+     */
     private String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Obtenir l'username des préférences
         storage = new DataStorage(this, getResources().getString(R.string.sharedPreferencesFile));
-        username = storage.getSharedPreference("username");
+        username = storage.getSharedPreference(getString(R.string.preferenceUsername));
         if (username != null) {
+            // Aller au menu principal si le nom est déjà renseigné
             Intent nextActivity = new Intent(this, ActivityMainMenu.class);
             startActivity(nextActivity);
         } else {
+            // Sinon lancer l'activité Name
             setContentView(R.layout.activity_name);
         }
     }
@@ -54,15 +67,20 @@ public class ActivityName extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Sauver le nom d'utilisateur
+     *
+     * @param v vue
+     */
     public void saveUsername(View v) {
         EditText usernameTxt = (EditText) findViewById(R.id.editUserName);
         String usernameStr = usernameTxt.getText().toString();
 
+        // S'il y a un username dans l'edittext, sauvegarder et aller au menu principal
         if (!usernameStr.equals("")) {
-            storage.newSharedPreference("username", usernameStr);
-
-            Intent nextActivity = new Intent(this, ActivityMainMenu.class);
-            startActivity(nextActivity);
+            storage.newSharedPreference(getString(R.string.preferenceUsername), usernameStr);
+            Intent mainMenuActivity = new Intent(this, ActivityMainMenu.class);
+            startActivity(mainMenuActivity);
         }
     }
 }

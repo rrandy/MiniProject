@@ -1,25 +1,25 @@
 package com.m2dl.miniproject.mini_projetandroid.controller;
 
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.m2dl.miniproject.mini_projetandroid.R;
 import com.m2dl.miniproject.mini_projetandroid.business.DataStorage;
 
 import java.io.File;
 
+/**
+ * Activité photo
+ * Prise d'une photo
+ */
 public class ActivityPhoto extends ActionBarActivity {
 
     /**
@@ -30,7 +30,9 @@ public class ActivityPhoto extends ActionBarActivity {
      * Code pour une capture d'image
      */
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
-
+    /**
+     * Gestion des données de l'application
+     */
     private DataStorage storage;
 
 
@@ -72,35 +74,19 @@ public class ActivityPhoto extends ActionBarActivity {
             //Si l'activité était une prise de photo
             case CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE:
                 if (resultCode == Activity.RESULT_OK) {
-                    Uri selectedImage = imageUri;
-                    getContentResolver().notifyChange(selectedImage, null);
-//                    ImageView imageView = view;
-                    ContentResolver cr = getContentResolver();
-                    Bitmap bitmap;
-                    try {
-                        bitmap = android.provider.MediaStore.Images.Media
-                                .getBitmap(cr, selectedImage);
-
-//                        imageView.setImageBitmap(bitmap);
-                        //Affichage de l'infobulle
-                        Toast.makeText(this, selectedImage.toString(),
-                                Toast.LENGTH_LONG).show();
-
-                    } catch (Exception e) {
-                        Toast.makeText(this, "Failed to load", Toast.LENGTH_SHORT)
-                                .show();
-                        Log.e("Camera", e.toString());
-                    }
+                    getContentResolver().notifyChange(imageUri, null);
                 }
         }
         finish();
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_mini_project, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
