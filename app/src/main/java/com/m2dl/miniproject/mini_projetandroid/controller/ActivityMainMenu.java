@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.m2dl.miniproject.mini_projetandroid.business.DataStorage;
-import com.m2dl.miniproject.mini_projetandroid.business.ExifInterfaceExtended;
 import com.m2dl.miniproject.mini_projetandroid.R;
 
 import java.io.IOException;
@@ -76,40 +75,6 @@ public class ActivityMainMenu extends ActionBarActivity {
 
             }
         });
-    }
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        try {
-            ExifInterfaceExtended exif = new ExifInterfaceExtended(filePath);
-            if (resultCode == RESULT_OK) {
-//                    Toast.makeText(this.getApplicationContext(), comment, Toast.LENGTH_LONG).show();
-
-//                if (requestCode == 1) {
-//                    String comment = data.getStringExtra("comment");
-//                    exif.setAttribute(ExifInterfaceExtended.TAG_USER_COMMENT, comment);
-//                }
-//                if (requestCode == 1) {
-//                    String comment = data.getStringExtra("comment");
-//                    exif.setAttribute(ExifInterfaceExtended.TAG_USER_COMMENT, comment);
-//                }
-                if (requestCode == 1) {
-                    String comment = data.getStringExtra("comment");
-                    exif.setAttribute(ExifInterfaceExtended.TAG_USER_COMMENT, comment);
-                }
-//                if (requestCode == 1) {
-//                    String comment = data.getStringExtra("comment");
-//                    exif.setAttribute(ExifInterfaceExtended.TAG_USER_COMMENT, comment);
-//                }
-                exif.saveAttributes();
-            }
-
-            if (resultCode == RESULT_CANCELED) {
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 
